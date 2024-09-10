@@ -1,0 +1,114 @@
+import time
+import os
+import platform
+
+nome = input("Qual o seu nome? ")
+print("Estamos processando sua solicitação...")
+time.sleep(3)  # Aguarda 3 segundos para simular o processamento
+
+def limpar_tela():
+    # Verifica o sistema operacional
+    sistema = platform.system()
+    
+    if sistema == "Windows":
+        os.system("cls")  # Comando para limpar a tela no Windows
+    else:
+        os.system("clear")  # Comando para limpar a tela em sistemas Unix/Linux/Mac
+
+def tempo():
+    print("Aguarde...")
+    time.sleep(2)
+
+def opcao_1():
+    print("Depósito realizado.")
+    tempo()
+
+def opcao_2():
+    print("Saque realizado.")
+    tempo()
+
+def opcao_3():
+    print("Esse é seu saldo atual.")
+    input("\nPressione Enter para voltar ao menu principal...")  # Espera o usuário pressionar Enter
+
+def opcao_4(saques):
+    if saques:
+        print("\nExtrato de Saques:")
+        for i, valor in enumerate(saques, 1):
+            print(f"Saque {i}: R${valor:.2f}")
+    else:
+        print("Nenhum saque realizado ainda.")
+    input("\nPressione Enter para voltar ao menu principal...")  # Espera o usuário pressionar Enter
+
+def titulo():
+    print(f"Seja bem-vindo, Sr: {nome}")
+
+def mostrar_menu():
+    titulo()  # Exibe o título e a saudação antes do menu
+    print("\nMenu Principal")
+    print("1. Depósito")
+    print("2. Saque")
+    print("3. Valor na conta")
+    print("4. Extrato de Saques")
+    print("5. Sair")
+
+def menu():
+    saldo = 0
+    saques = []
+    limite_diario_saques = 3
+    valor_maximo_saque = 500
+    saques_realizados = 0
+
+    while True:
+        limpar_tela()  # Limpa a tela antes de exibir o menu
+        mostrar_menu()
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+            try:
+                deposito = float(input('Qual o valor deseja depositar? '))
+                if deposito < 0:
+                    print("O valor do depósito não pode ser negativo. Tente novamente.")
+                else:
+                    saldo += deposito
+                    opcao_1()
+            except ValueError:
+                print("Entrada inválida. Por favor, insira um número.")
+
+        elif escolha == '2':
+            try:
+                saque = float(input("Qual valor deseja sacar? "))
+                if saque < 0:
+                    print("O valor do saque não pode ser negativo. Tente novamente.")
+                elif saque > saldo:
+                    print("Saldo insuficiente para o saque. Tente um valor menor.")
+                elif saque > valor_maximo_saque:
+                    print(f"O valor máximo de saque é R${valor_maximo_saque:.2f}. Tente um valor menor.")
+                elif saques_realizados >= limite_diario_saques:
+                    print(f"Você já realizou o máximo de saques diários permitido ({limite_diario_saques}).")
+                else:
+                    saldo -= saque
+                    saques.append(saque)
+                    saques_realizados += 1
+                    opcao_2()
+            except ValueError:
+                print("Entrada inválida. Por favor, insira um número.")
+
+        elif escolha == '3':
+            print(f"Seu saldo atual é R${saldo:.2f}")
+            opcao_3()  # Mostra o saldo e aguarda interação
+
+        elif escolha == '4':
+            opcao_4(saques)  # Mostra o extrato de saques e aguarda interação
+
+        elif escolha == '5':
+            print("Obrigado por utilizar nossos serviços. Até logo!")
+            break
+
+        else:
+            print("Opção inválida. Tente novamente.")
+
+        time.sleep(2)  # Pausa antes de limpar a tela novamente, exceto na opção 3 e 4
+
+# Iniciar o menu
+menu()
